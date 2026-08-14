@@ -1,0 +1,105 @@
+GRTEC WebAR
+PROPRIETARY SOFTWARE LICENSE
+
+Copyright (c) 2026 GRTEC
+Copyright holder: Gerardo Ramos
+
+All rights reserved.
+
+1. OWNERSHIP
+
+GRTEC WebAR, including its source code, architecture, configuration,
+documentation, user interface, backend components, frontend components,
+security mechanisms, deployment configuration and related materials,
+is proprietary software owned by GRTEC / Gerardo Ramos, except for
+third-party software and materials expressly identified as belonging
+to their respective owners.
+
+2. RESTRICTIONS
+
+Without prior written permission from GRTEC, you may not:
+
+- copy the software;
+- redistribute the software;
+- resell the software;
+- sublicense the software;
+- publish the source code;
+- make the source code publicly available;
+- create a competing product substantially based on this software;
+- remove or modify copyright or proprietary notices;
+- use the software to provide a commercial WebAR service to third parties;
+- reverse engineer the software for the purpose of creating a competing
+  product, except where such restriction is prohibited by applicable law.
+
+3. CLIENT USE
+
+A customer who obtains a valid commercial license from GRTEC may use
+the software only within the scope, domain(s), project(s), account(s),
+or other limits expressly agreed in the applicable commercial
+agreement or invoice.
+
+Payment for a service does not automatically transfer ownership of
+the software or its intellectual property.
+
+4. INTELLECTUAL PROPERTY
+
+All rights not expressly granted in writing remain with GRTEC / Gerardo
+Ramos.
+
+The GRTEC name, GRTEC logo, trademarks, branding and visual identity
+are not licensed for independent use unless expressly authorized in
+writing.
+
+5. CUSTOMER CONTENT
+
+Photographs, videos, text, logos and other content supplied by a
+customer remain the property of the customer or their respective
+rights holders.
+
+This license does not transfer ownership of customer content to GRTEC.
+
+6. THIRD-PARTY SOFTWARE
+
+This software may incorporate third-party libraries, frameworks,
+services or open-source components.
+
+Such components remain subject to their respective licenses. Nothing
+in this license overrides the rights granted by those third-party
+licenses.
+
+7. NO WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS", TO THE MAXIMUM EXTENT PERMITTED BY
+APPLICABLE LAW.
+
+GRTEC / GERARDO RAMOS DISCLAIMS WARRANTIES TO THE EXTENT PERMITTED BY
+LAW, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE AND NON-INFRINGEMENT.
+
+8. LIMITATION OF LIABILITY
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, GRTEC / GERARDO
+RAMOS SHALL NOT BE LIABLE FOR INDIRECT, INCIDENTAL, SPECIAL,
+CONSEQUENTIAL OR PUNITIVE DAMAGES ARISING FROM THE USE OF THE
+SOFTWARE.
+
+9. TERMINATION
+
+Any commercial license granted by GRTEC may be terminated if the
+licensee materially violates the applicable commercial agreement or
+this license.
+
+Upon termination, the licensee must cease any use that is no longer
+authorized and, where applicable, remove unauthorized copies of the
+software.
+
+10. CONTACT
+
+For commercial licensing, redistribution rights, white-label use,
+source-code access or other permissions, contact:
+
+GRTEC
+Gerardo Ramos
+Colombia
+
+All rights reserved.

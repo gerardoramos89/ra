@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#071c1b">
+<title>GRTEC WebAR</title>
+<script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050909;font-family:Arial,sans-serif}
+#ui{position:fixed;inset:0;z-index:20;pointer-events:none}
+#message{position:absolute;top:18px;left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:520px;padding:12px 18px;border-radius:999px;background:rgba(4,14,14,.86);color:#fff;font-size:14px;text-align:center}
+#card{position:absolute;left:50%;bottom:22px;transform:translateX(-50%) translateY(140%);width:calc(100% - 28px);max-width:480px;background:rgba(5,18,18,.95);backdrop-filter:blur(18px);color:#fff;border-radius:22px;padding:20px;box-shadow:0 18px 55px #0008;transition:transform .4s ease;pointer-events:auto}
+#card.show{transform:translateX(-50%) translateY(0)}#card h2{margin:0 0 8px;font-size:22px}#card p{margin:0;color:#d2dddd;line-height:1.5;font-size:14px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.actions button,.actions a{border:0;border-radius:999px;padding:11px 15px;font-weight:800;text-decoration:none;cursor:pointer}.actions button{background:#fff;color:#062f2d}.actions a{background:#183b39;color:#fff}
+#downloadStatus{font-size:12px;color:#aab7b7;margin-top:8px}
+a-scene{position:fixed!important;inset:0}
+</style>
+</head>
+<body>
+<div id="ui">
+  <div id="message">Cargando marcador…</div>
+  <div id="card">
+    <h2 id="title">✨ GRTEC WebAR</h2>
+    <p id="description">Apunta la cámara al marcador.</p>
+    <p id="downloadStatus"></p>
+    <div class="actions">
+      <button id="downloadBtn" style="display:none">⬇ Descargar fotografía</button>
+      <a id="grtecBtn" href="#" target="_blank" rel="noopener" style="display:none">🌐 Conocer GRTEC</a>
+    </div>
+  </div>
+</div>
+
+<a-scene id="scene"
+  mindar-image="imageTargetSrc: ./assets/fotografia.mind; uiLoading: yes; uiScanning: yes; uiError: yes"
+  color-space="sRGB"
+  renderer="colorManagement: true; physicallyCorrectLights"
+  vr-mode-ui="enabled: false"
+  device-orientation-permission-ui="enabled: false">
+  <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
+  <a-entity id="target" mindar-image-target="targetIndex:0"></a-entity>
+</a-scene>
+
+<script>
+(() => {
+  const params = new URLSearchParams(location.search);
+  const marker = params.get("marker") === "logo" ? "logo" : "foto";
+  const scene = document.getElementById("scene");
+  const target = document.getElementById("target");
+  const message = document.getElementById("message");
+  const card = document.getElementById("card");
+  const title = document.getElementById("title");
+  const description = document.getElementById("description");
+  const downloadBtn = document.getElementById("downloadBtn");
+  const downloadStatus = document.getElementById("downloadStatus");
+  const grtecBtn = document.getElementById("grtecBtn");
+
+  if (marker === "logo") {
+    scene.setAttribute("mindar-image",
+      "imageTargetSrc: ./assets/logo-grtec.mind; uiLoading: yes; uiScanning: yes; uiError: yes");
+    title.textContent = "⭕ GRTEC WebAR";
+    description.textContent = "Logo GRTEC reconocido. Bienvenido a la experiencia digital.";
+    grtecBtn.href = "https://github.com/gerardoramos89";
+    grtecBtn.textContent = "🌐 Ver GRTEC";
+    grtecBtn.style.display = "inline-block";
+    message.textContent = "Apunta la cámara al logo GRTEC";
+  } else {
+    scene.setAttribute("mindar-image",
+      "imageTargetSrc: ./assets/fotografia.mind; uiLoading: yes; uiScanning: yes; uiError: yes");
+    title.textContent = "✨ Tu fotografía cobra vida";
+    description.textContent = "Fotografía reconocida por GRTEC.";
+    message.textContent = "Apunta la cámara a la fotografía";
+  }
+
+  target.addEventListener("targetFound", () => {
+    message.textContent = marker === "logo" ? "⭕ ¡Logo GRTEC reconocido!" : "✨ ¡Fotografía reconocida!";
+    card.classList.add("show");
+    if (marker === "foto") {
+      downloadBtn.style.display = "inline-block";
+      downloadBtn.onclick = async () => {
+        downloadStatus.textContent = "Preparando descarga…";
+        try {
+          const r = await fetch("https://YOUR-BACKEND.example.com/api/experience/photo-001",
+            {cache:"no-store"});
+          if (!r.ok) throw new Error("API unavailable");
+          const data = await r.json();
+          if (!data.downloadUrl) throw new Error("No download URL");
+          const a = document.createElement("a");
+          a.href = data.downloadUrl;
+          a.download = data.downloadName || "GRTEC-photograph.jpg";
+          document.body.appendChild(a); a.click(); a.remove();
+          downloadStatus.textContent = "Si el navegador no inició la descarga, toca el botón nuevamente.";
+        } catch(e) {
+          console.error(e);
+          downloadStatus.textContent = "Configura GRTEC_API_URL / backend para habilitar la descarga.";
+        }
+      };
+    }
+  });
+  target.addEventListener("targetLost", () => card.classList.remove("show"));
+})();
+</script>
+</body>
+</html>
