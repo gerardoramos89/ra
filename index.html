@@ -7,15 +7,17 @@
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     >
 
     <title>GRTEC WebAR</title>
 
-    <!-- A-Frame oficial compatible -->
+
+    <!-- A-FRAME -->
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 
-    <!-- MindAR -->
+
+    <!-- MINDAR -->
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
 
@@ -35,24 +37,18 @@
             background: #000;
 
             font-family: Arial, sans-serif;
-
         }
 
 
-        /*
-         * IMPORTANTE:
-         *
-         * NO ponemos CSS sobre a-scene.
-         *
-         * MindAR controla la cámara y el canvas.
-         */
-
+        /* =====================================
+           MENSAJE SUPERIOR
+        ===================================== */
 
         #message {
 
             position: fixed;
 
-            z-index: 100;
+            z-index: 9999;
 
             top: 20px;
 
@@ -64,13 +60,13 @@
 
             max-width: 450px;
 
-            padding: 14px 20px;
-
             box-sizing: border-box;
+
+            padding: 14px 20px;
 
             border-radius: 30px;
 
-            background: rgba(0, 0, 0, .80);
+            background: rgba(0, 0, 0, .78);
 
             color: white;
 
@@ -78,8 +74,14 @@
 
             font-size: 17px;
 
+            line-height: 1.3;
+
         }
 
+
+        /* =====================================
+           VENTANA DE RESULTADO
+        ===================================== */
 
         #result {
 
@@ -87,11 +89,11 @@
 
             position: fixed;
 
-            z-index: 200;
-
-            top: 50%;
+            z-index: 10000;
 
             left: 50%;
+
+            top: 50%;
 
             transform: translate(-50%, -50%);
 
@@ -107,11 +109,13 @@
 
             padding: 15px;
 
-            border-radius: 20px;
+            border-radius: 22px;
 
-            background: rgba(0, 0, 0, .93);
+            background: rgba(0, 0, 0, .92);
 
-            color: white;
+            box-shadow:
+
+                0 15px 50px rgba(0, 0, 0, .65);
 
             text-align: center;
 
@@ -125,6 +129,10 @@
         }
 
 
+        /* =====================================
+           FOTOGRAFÍA
+        ===================================== */
+
         #resultImage {
 
             display: block;
@@ -137,14 +145,20 @@
 
             border-radius: 15px;
 
-            margin-bottom: 15px;
+            margin: 0 auto 15px auto;
 
         }
 
 
+        /* =====================================
+           TITULO
+        ===================================== */
+
         #resultTitle {
 
-            font-size: 21px;
+            color: white;
+
+            font-size: 22px;
 
             font-weight: bold;
 
@@ -155,14 +169,18 @@
 
         #resultText {
 
-            font-size: 14px;
-
             color: #ddd;
+
+            font-size: 14px;
 
             margin-bottom: 15px;
 
         }
 
+
+        /* =====================================
+           BOTON DESCARGAR
+        ===================================== */
 
         #downloadButton {
 
@@ -186,26 +204,58 @@
 
             font-weight: bold;
 
+            cursor: pointer;
+
+            margin-bottom: 10px;
+
         }
 
+
+        #downloadButton:active {
+
+            transform: scale(.98);
+
+        }
+
+
+        /* =====================================
+           CERRAR
+        ===================================== */
 
         #closeButton {
 
             width: 100%;
 
-            margin-top: 10px;
-
-            padding: 14px;
-
-            border-radius: 15px;
+            padding: 13px;
 
             border: 1px solid rgba(255,255,255,.3);
+
+            border-radius: 15px;
 
             background: transparent;
 
             color: white;
 
-            font-size: 16px;
+            font-size: 15px;
+
+            cursor: pointer;
+
+        }
+
+
+        /* A-FRAME */
+
+        a-scene {
+
+            position: fixed !important;
+
+            top: 0;
+
+            left: 0;
+
+            width: 100% !important;
+
+            height: 100% !important;
 
         }
 
@@ -217,24 +267,26 @@
 <body>
 
 
-<!-- ======================================
+<!-- =====================================
      MENSAJE
-======================================= -->
+===================================== -->
 
 <div id="message">
 
-    📷 Iniciando cámara...
+    📷 Apunta la cámara a la fotografía
 
 </div>
 
 
 
-<!-- ======================================
+<!-- =====================================
      RESULTADO
-======================================= -->
+===================================== -->
 
 <div id="result">
 
+
+    <!-- FOTO -->
 
     <img
         id="resultImage"
@@ -243,6 +295,8 @@
     >
 
 
+    <!-- TITULO -->
+
     <div id="resultTitle">
 
         🎯 ¡Fotografía reconocida!
@@ -250,17 +304,21 @@
     </div>
 
 
+    <!-- TEXTO -->
+
     <div id="resultText">
 
-        GRTEC reconoció la fotografía.
+        GRTEC reconoció correctamente la fotografía.
 
     </div>
 
 
+    <!-- DESCARGAR -->
+
     <a
         id="downloadButton"
         href="./assets/fotografia.jpeg"
-        download="GRTEC-fotografia.jpeg"
+        download="GRTEC-fotografia.jpg"
     >
 
         ⬇️ Descargar fotografía
@@ -268,7 +326,11 @@
     </a>
 
 
-    <button id="closeButton">
+    <!-- CERRAR -->
+
+    <button
+        id="closeButton"
+    >
 
         📷 Volver a la cámara
 
@@ -279,21 +341,25 @@
 
 
 
-<!-- ======================================
+<!-- =====================================
      MINDAR
-======================================= -->
+===================================== -->
 
 <a-scene
 
+    id="scene"
+
     mindar-image="
         imageTargetSrc: ./assets/fotografia.mind;
+        uiLoading: yes;
+        uiScanning: yes;
+        uiError: yes;
     "
 
     color-space="sRGB"
 
     renderer="
         colorManagement: true;
-        physicallyCorrectLights;
     "
 
     vr-mode-ui="
@@ -303,13 +369,10 @@
     device-orientation-permission-ui="
         enabled: false;
     "
-
 >
 
 
-    <!-- ==================================
-         CÁMARA
-    =================================== -->
+    <!-- CÁMARA -->
 
     <a-camera
 
@@ -319,24 +382,22 @@
             enabled: false;
         "
 
-    ></a-camera>
+    >
+    </a-camera>
 
 
 
-    <!-- ==================================
-         TARGET
-    =================================== -->
+    <!-- TARGET -->
 
     <a-entity
 
-        id="photoTarget"
+        id="target"
 
         mindar-image-target="
             targetIndex: 0;
         "
 
     >
-
     </a-entity>
 
 
@@ -347,150 +408,188 @@
 <script>
 
 
-/* ======================================
-   ELEMENTOS
-======================================= */
+    /* =====================================
+       ELEMENTOS
+    ===================================== */
 
-const scene =
-    document.querySelector("a-scene");
-
-
-const target =
-    document.querySelector("#photoTarget");
+    const scene =
+        document.querySelector("#scene");
 
 
-const message =
-    document.querySelector("#message");
+    const target =
+        document.querySelector("#target");
 
 
-const result =
-    document.querySelector("#result");
+    const message =
+        document.querySelector("#message");
 
 
-const closeButton =
-    document.querySelector("#closeButton");
+    const result =
+        document.querySelector("#result");
 
 
-
-/* ======================================
-   A-FRAME CARGADO
-======================================= */
-
-scene.addEventListener(
-    "loaded",
-    () => {
-
-        console.log(
-            "GRTEC: A-Frame cargado"
-        );
-
-    }
-);
+    const closeButton =
+        document.querySelector("#closeButton");
 
 
 
-/* ======================================
-   MINDAR LISTO
-======================================= */
+    /* =====================================
+       A-FRAME CARGADO
+    ===================================== */
 
-scene.addEventListener(
-    "arReady",
-    () => {
+    scene.addEventListener(
 
-        console.log(
-            "GRTEC: AR READY"
-        );
+        "loaded",
 
-        message.innerHTML =
-            "📷 Apunta la cámara a la fotografía";
+        function () {
 
-    }
-);
+            console.log(
+                "GRTEC: A-Frame cargado"
+            );
 
+        }
 
-
-/* ======================================
-   ERROR MINDAR
-======================================= */
-
-scene.addEventListener(
-    "arError",
-    (event) => {
-
-        console.error(
-            "GRTEC: AR ERROR",
-            event
-        );
-
-        message.innerHTML =
-            "❌ Error al iniciar la cámara";
-
-    }
-);
+    );
 
 
 
-/* ======================================
-   TARGET ENCONTRADO
-======================================= */
+    /* =====================================
+       AR LISTO
+    ===================================== */
 
-target.addEventListener(
-    "targetFound",
-    () => {
+    scene.addEventListener(
 
-        console.log(
-            "🎯 TARGET FOUND"
-        );
+        "arReady",
 
-        result.classList.add(
-            "show"
-        );
+        function () {
 
-        message.style.display =
-            "none";
+            console.log(
+                "GRTEC: AR listo"
+            );
 
-    }
-);
+            message.innerHTML =
+                "📷 Apunta la cámara a la fotografía";
 
+        }
 
-
-/* ======================================
-   TARGET PERDIDO
-======================================= */
-
-target.addEventListener(
-    "targetLost",
-    () => {
-
-        console.log(
-            "🎯 TARGET LOST"
-        );
-
-    }
-);
+    );
 
 
 
-/* ======================================
-   VOLVER A CÁMARA
-======================================= */
+    /* =====================================
+       ERROR
+    ===================================== */
 
-closeButton.addEventListener(
-    "click",
-    () => {
+    scene.addEventListener(
 
-        result.classList.remove(
-            "show"
-        );
+        "arError",
 
-        message.style.display =
-            "block";
+        function (event) {
 
-        message.innerHTML =
-            "📷 Apunta la cámara a la fotografía";
+            console.error(
+                "GRTEC AR ERROR:",
+                event
+            );
 
-    }
-);
+            message.innerHTML =
+                "❌ No se pudo iniciar la cámara";
+
+        }
+
+    );
+
+
+
+    /* =====================================
+       TARGET ENCONTRADO
+    ===================================== */
+
+    target.addEventListener(
+
+        "targetFound",
+
+        function () {
+
+            console.log(
+                "🎯 GRTEC TARGET FOUND"
+            );
+
+
+            /*
+             * Cambiar mensaje
+             */
+
+            message.innerHTML =
+                "🎯 ¡Fotografía reconocida!";
+
+
+            /*
+             * Mostrar resultado
+             */
+
+            result.classList.add(
+                "show"
+            );
+
+
+            /*
+             * Ocultar mensaje
+             */
+
+            message.style.display =
+                "none";
+
+        }
+
+    );
+
+
+
+    /* =====================================
+       TARGET PERDIDO
+    ===================================== */
+
+    target.addEventListener(
+
+        "targetLost",
+
+        function () {
+
+            console.log(
+                "🎯 GRTEC TARGET LOST"
+            );
+
+        }
+
+    );
+
+
+
+    /* =====================================
+       CERRAR RESULTADO
+    ===================================== */
+
+    closeButton.addEventListener(
+
+        "click",
+
+        function () {
+
+            result.classList.remove(
+                "show"
+            );
+
+
+            message.style.display =
+                "block";
+
+
+            message.innerHTML =
+                "📷 Apunta la cámara a la fotografía";
+
+        }
+
+    );
 
 
 </script>

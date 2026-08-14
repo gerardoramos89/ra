@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
+
+<title>Camera Test</title>
+
+<style>
+
+html,
+body {
+
+    margin: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: black;
+
+}
+
+video {
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<video
+    id="video"
+    autoplay
+    playsinline>
+</video>
+
+<script>
+
+navigator.mediaDevices
+    .getUserMedia({
+
+        video: {
+            facingMode: "environment"
+        },
+
+        audio: false
+
+    })
+    .then(
+        stream => {
+
+            document
+                .getElementById("video")
+                .srcObject = stream;
+
+            console.log(
+                "CAMERA OK"
+            );
+
+        }
+    )
+    .catch(
+        error => {
+
+            console.error(
+                "CAMERA ERROR:",
+                error
+            );
+
+            alert(
+                "Error cámara: "
+                + error.name
+            );
+
+        }
+    );
+
+</script>
+
+</body>
+
+</html>
