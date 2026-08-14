@@ -13,12 +13,26 @@
     <title>GRTEC WebAR</title>
 
 
-    <!-- A-FRAME -->
-    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <!--
+        IMPORTMAP
+    -->
 
+    <script type="importmap">
+    {
+        "imports": {
 
-    <!-- MINDAR -->
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+            "three":
+            "https://unpkg.com/three@0.160.0/build/three.module.js",
+
+            "three/addons/":
+            "https://unpkg.com/three@0.160.0/examples/jsm/",
+
+            "mindar-image-three":
+            "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
+
+        }
+    }
+    </script>
 
 
     <style>
@@ -27,9 +41,11 @@
         body {
 
             margin: 0;
+
             padding: 0;
 
             width: 100%;
+
             height: 100%;
 
             overflow: hidden;
@@ -37,18 +53,88 @@
             background: #000;
 
             font-family: Arial, sans-serif;
+
         }
 
 
-        /* =====================================
-           MENSAJE SUPERIOR
-        ===================================== */
+        /*
+         * CONTENEDOR AR
+         */
+
+        #container {
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            width: 100vw;
+
+            height: 100vh;
+
+            overflow: hidden;
+
+            background: #000;
+
+        }
+
+
+        /*
+         * EL VIDEO DE LA CÁMARA
+         */
+
+        #cameraVideo {
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            width: 100vw;
+
+            height: 100vh;
+
+            object-fit: cover;
+
+            z-index: 1;
+
+            background: #000;
+
+        }
+
+
+        /*
+         * CANVAS THREE.JS
+         */
+
+        #container canvas {
+
+            position: fixed !important;
+
+            top: 0 !important;
+
+            left: 0 !important;
+
+            width: 100vw !important;
+
+            height: 100vh !important;
+
+            z-index: 2 !important;
+
+            pointer-events: none;
+
+        }
+
+
+        /*
+         * MENSAJE
+         */
 
         #message {
 
             position: fixed;
-
-            z-index: 9999;
 
             top: 20px;
 
@@ -56,17 +142,19 @@
 
             transform: translateX(-50%);
 
+            z-index: 10;
+
             width: calc(100% - 40px);
 
-            max-width: 450px;
-
-            box-sizing: border-box;
+            max-width: 430px;
 
             padding: 14px 20px;
 
+            box-sizing: border-box;
+
             border-radius: 30px;
 
-            background: rgba(0, 0, 0, .78);
+            background: rgba(0,0,0,.75);
 
             color: white;
 
@@ -74,14 +162,12 @@
 
             font-size: 17px;
 
-            line-height: 1.3;
-
         }
 
 
-        /* =====================================
-           VENTANA DE RESULTADO
-        ===================================== */
+        /*
+         * RESULTADO
+         */
 
         #result {
 
@@ -89,11 +175,11 @@
 
             position: fixed;
 
-            z-index: 10000;
-
-            left: 50%;
+            z-index: 20;
 
             top: 50%;
+
+            left: 50%;
 
             transform: translate(-50%, -50%);
 
@@ -105,17 +191,13 @@
 
             overflow-y: auto;
 
-            box-sizing: border-box;
-
             padding: 15px;
 
-            border-radius: 22px;
+            box-sizing: border-box;
 
-            background: rgba(0, 0, 0, .92);
+            border-radius: 20px;
 
-            box-shadow:
-
-                0 15px 50px rgba(0, 0, 0, .65);
+            background: rgba(0,0,0,.93);
 
             text-align: center;
 
@@ -129,13 +211,7 @@
         }
 
 
-        /* =====================================
-           FOTOGRAFÍA
-        ===================================== */
-
         #resultImage {
-
-            display: block;
 
             width: 100%;
 
@@ -145,24 +221,18 @@
 
             border-radius: 15px;
 
-            margin: 0 auto 15px auto;
-
         }
 
-
-        /* =====================================
-           TITULO
-        ===================================== */
 
         #resultTitle {
 
             color: white;
 
-            font-size: 22px;
+            font-size: 21px;
 
             font-weight: bold;
 
-            margin-bottom: 8px;
+            margin: 15px 0 8px;
 
         }
 
@@ -177,10 +247,6 @@
 
         }
 
-
-        /* =====================================
-           BOTON DESCARGAR
-        ===================================== */
 
         #downloadButton {
 
@@ -204,58 +270,60 @@
 
             font-weight: bold;
 
-            cursor: pointer;
-
-            margin-bottom: 10px;
-
         }
 
-
-        #downloadButton:active {
-
-            transform: scale(.98);
-
-        }
-
-
-        /* =====================================
-           CERRAR
-        ===================================== */
 
         #closeButton {
 
             width: 100%;
 
-            padding: 13px;
+            margin-top: 10px;
 
-            border: 1px solid rgba(255,255,255,.3);
+            padding: 14px;
 
             border-radius: 15px;
+
+            border: 1px solid rgba(255,255,255,.3);
 
             background: transparent;
 
             color: white;
 
-            font-size: 15px;
-
-            cursor: pointer;
+            font-size: 16px;
 
         }
 
 
-        /* A-FRAME */
+        /*
+         * LOADING
+         */
 
-        a-scene {
+        #loading {
 
-            position: fixed !important;
+            position: fixed;
 
-            top: 0;
+            inset: 0;
 
-            left: 0;
+            z-index: 30;
 
-            width: 100% !important;
+            display: flex;
 
-            height: 100% !important;
+            justify-content: center;
+
+            align-items: center;
+
+            background: #000;
+
+            color: white;
+
+            font-size: 18px;
+
+        }
+
+
+        #loading.hidden {
+
+            display: none;
 
         }
 
@@ -265,6 +333,36 @@
 
 
 <body>
+
+
+<!-- =====================================
+     LOADING
+===================================== -->
+
+<div id="loading">
+
+    ⏳ Iniciando cámara...
+
+</div>
+
+
+<!-- =====================================
+     CÁMARA
+===================================== -->
+
+<video
+    id="cameraVideo"
+    autoplay
+    muted
+    playsinline
+></video>
+
+
+<!-- =====================================
+     THREE.JS / AR
+===================================== -->
+
+<div id="container"></div>
 
 
 <!-- =====================================
@@ -278,15 +376,12 @@
 </div>
 
 
-
 <!-- =====================================
      RESULTADO
 ===================================== -->
 
 <div id="result">
 
-
-    <!-- FOTO -->
 
     <img
         id="resultImage"
@@ -295,16 +390,12 @@
     >
 
 
-    <!-- TITULO -->
-
     <div id="resultTitle">
 
         🎯 ¡Fotografía reconocida!
 
     </div>
 
-
-    <!-- TEXTO -->
 
     <div id="resultText">
 
@@ -313,12 +404,10 @@
     </div>
 
 
-    <!-- DESCARGAR -->
-
     <a
         id="downloadButton"
         href="./assets/fotografia.jpeg"
-        download="GRTEC-fotografia.jpg"
+        download="GRTEC-fotografia.jpeg"
     >
 
         ⬇️ Descargar fotografía
@@ -326,11 +415,7 @@
     </a>
 
 
-    <!-- CERRAR -->
-
-    <button
-        id="closeButton"
-    >
+    <button id="closeButton">
 
         📷 Volver a la cámara
 
@@ -340,84 +425,32 @@
 </div>
 
 
+<script type="module">
 
-<!-- =====================================
-     MINDAR
-===================================== -->
-
-<a-scene
-
-    id="scene"
-
-    mindar-image="
-        imageTargetSrc: ./assets/fotografia.mind;
-        uiLoading: yes;
-        uiScanning: yes;
-        uiError: yes;
-    "
-
-    color-space="sRGB"
-
-    renderer="
-        colorManagement: true;
-    "
-
-    vr-mode-ui="
-        enabled: false;
-    "
-
-    device-orientation-permission-ui="
-        enabled: false;
-    "
->
+    import * as THREE
+        from "three";
 
 
-    <!-- CÁMARA -->
-
-    <a-camera
-
-        position="0 0 0"
-
-        look-controls="
-            enabled: false;
-        "
-
-    >
-    </a-camera>
+    import {
+        MindARThree
+    }
+    from "mindar-image-three";
 
 
+    /*
+     * ELEMENTOS
+     */
 
-    <!-- TARGET -->
-
-    <a-entity
-
-        id="target"
-
-        mindar-image-target="
-            targetIndex: 0;
-        "
-
-    >
-    </a-entity>
+    const container =
+        document.querySelector("#container");
 
 
-</a-scene>
+    const videoElement =
+        document.querySelector("#cameraVideo");
 
 
-
-<script>
-
-
-    /* =====================================
-       ELEMENTOS
-    ===================================== */
-
-    const scene =
-        document.querySelector("#scene");
-
-
-    const target =
-        document.querySelector("#target");
+    const loading =
+        document.querySelector("#loading");
 
 
     const message =
@@ -432,165 +465,245 @@
         document.querySelector("#closeButton");
 
 
+    /*
+     * MINDAR
+     */
 
-    /* =====================================
-       A-FRAME CARGADO
-    ===================================== */
+    const mindarThree =
+        new MindARThree({
 
-    scene.addEventListener(
+            container: container,
 
-        "loaded",
+            imageTargetSrc:
+                "./assets/fotografia.mind",
 
-        function () {
+            uiLoading: "yes",
 
-            console.log(
-                "GRTEC: A-Frame cargado"
-            );
+            uiScanning: "yes",
 
-        }
+            uiError: "yes"
 
+        });
+
+
+    /*
+     * COMPONENTES THREE
+     */
+
+    const {
+        renderer,
+        scene,
+        camera
+    } = mindarThree;
+
+
+    /*
+     * TARGET
+     */
+
+    const anchor =
+        mindarThree.addAnchor(0);
+
+
+    /*
+     * RECTÁNGULO DE PRUEBA
+     *
+     * Si aparece sobre la fotografía,
+     * sabemos que el tracking funciona.
+     */
+
+    const geometry =
+        new THREE.PlaneGeometry(
+            1,
+            0.75
+        );
+
+
+    const material =
+        new THREE.MeshBasicMaterial({
+
+            color: 0x00ff00,
+
+            transparent: true,
+
+            opacity: 0.15
+
+        });
+
+
+    const plane =
+        new THREE.Mesh(
+            geometry,
+            material
+        );
+
+
+    anchor.group.add(
+        plane
     );
 
 
+    /*
+     * TARGET ENCONTRADO
+     */
 
-    /* =====================================
-       AR LISTO
-    ===================================== */
+    anchor.onTargetFound = () => {
 
-    scene.addEventListener(
+        console.log(
+            "🎯 GRTEC TARGET FOUND"
+        );
 
-        "arReady",
 
-        function () {
+        message.innerHTML =
+            "🎯 ¡Fotografía reconocida!";
+
+
+        /*
+         * Mostrar resultado
+         */
+
+        result.classList.add(
+            "show"
+        );
+
+    };
+
+
+    /*
+     * TARGET PERDIDO
+     */
+
+    anchor.onTargetLost = () => {
+
+        console.log(
+            "🎯 GRTEC TARGET LOST"
+        );
+
+    };
+
+
+    /*
+     * INICIAR AR
+     */
+
+    async function startAR() {
+
+        try {
 
             console.log(
-                "GRTEC: AR listo"
+                "GRTEC: iniciando MindAR..."
             );
 
-            message.innerHTML =
-                "📷 Apunta la cámara a la fotografía";
+
+            /*
+             * Iniciar cámara
+             */
+
+            await mindarThree.start();
+
+
+            console.log(
+                "GRTEC: MindAR iniciado"
+            );
+
+
+            /*
+             * OBTENER EL VIDEO REAL
+             * QUE ESTÁ USANDO MINDAR
+             */
+
+            const stream =
+                mindarThree.video.srcObject;
+
+
+            /*
+             * Conectarlo a nuestro
+             * elemento <video>
+             */
+
+            videoElement.srcObject =
+                stream;
+
+
+            await videoElement.play();
+
+
+            console.log(
+                "GRTEC: video conectado"
+            );
+
+
+            /*
+             * Ocultar loading
+             */
+
+            loading.classList.add(
+                "hidden"
+            );
+
+
+            /*
+             * Render loop
+             */
+
+            renderer.setAnimationLoop(
+                () => {
+
+                    renderer.render(
+                        scene,
+                        camera
+                    );
+
+                }
+            );
+
 
         }
 
-    );
-
-
-
-    /* =====================================
-       ERROR
-    ===================================== */
-
-    scene.addEventListener(
-
-        "arError",
-
-        function (event) {
+        catch (error) {
 
             console.error(
-                "GRTEC AR ERROR:",
-                event
+                "GRTEC ERROR:",
+                error
             );
+
+
+            loading.innerHTML =
+                "❌ Error iniciando AR";
+
 
             message.innerHTML =
-                "❌ No se pudo iniciar la cámara";
+                error.message;
 
         }
 
-    );
+    }
 
 
-
-    /* =====================================
-       TARGET ENCONTRADO
-    ===================================== */
-
-    target.addEventListener(
-
-        "targetFound",
-
-        function () {
-
-            console.log(
-                "🎯 GRTEC TARGET FOUND"
-            );
-
-
-            /*
-             * Cambiar mensaje
-             */
-
-            message.innerHTML =
-                "🎯 ¡Fotografía reconocida!";
-
-
-            /*
-             * Mostrar resultado
-             */
-
-            result.classList.add(
-                "show"
-            );
-
-
-            /*
-             * Ocultar mensaje
-             */
-
-            message.style.display =
-                "none";
-
-        }
-
-    );
-
-
-
-    /* =====================================
-       TARGET PERDIDO
-    ===================================== */
-
-    target.addEventListener(
-
-        "targetLost",
-
-        function () {
-
-            console.log(
-                "🎯 GRTEC TARGET LOST"
-            );
-
-        }
-
-    );
-
-
-
-    /* =====================================
-       CERRAR RESULTADO
-    ===================================== */
+    /*
+     * BOTÓN CERRAR
+     */
 
     closeButton.addEventListener(
-
         "click",
-
-        function () {
+        () => {
 
             result.classList.remove(
                 "show"
             );
 
-
-            message.style.display =
-                "block";
-
-
             message.innerHTML =
                 "📷 Apunta la cámara a la fotografía";
 
         }
-
     );
 
+
+    /*
+     * START
+     */
+
+    startAR();
 
 </script>
 
