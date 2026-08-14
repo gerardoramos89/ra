@@ -13,10 +13,6 @@
     <title>GRTEC WebAR</title>
 
 
-    <!--
-        IMPORTMAP
-    -->
-
     <script type="importmap">
     {
         "imports": {
@@ -335,13 +331,9 @@
 <body>
 
 
-<!-- =====================================
-     LOADING
-===================================== -->
-
 <div id="loading">
 
-    ⏳ Iniciando cámara...
+    ⏳ Demo Grtec Iniciando cámara...
 
 </div>
 
@@ -357,17 +349,8 @@
     playsinline
 ></video>
 
-
-<!-- =====================================
-     THREE.JS / AR
-===================================== -->
-
 <div id="container"></div>
 
-
-<!-- =====================================
-     MENSAJE
-===================================== -->
 
 <div id="message">
 
@@ -375,10 +358,6 @@
 
 </div>
 
-
-<!-- =====================================
-     RESULTADO
-===================================== -->
 
 <div id="result">
 
@@ -436,11 +415,6 @@
     }
     from "mindar-image-three";
 
-
-    /*
-     * ELEMENTOS
-     */
-
     const container =
         document.querySelector("#container");
 
@@ -464,11 +438,6 @@
     const closeButton =
         document.querySelector("#closeButton");
 
-
-    /*
-     * MINDAR
-     */
-
     const mindarThree =
         new MindARThree({
 
@@ -485,32 +454,14 @@
 
         });
 
-
-    /*
-     * COMPONENTES THREE
-     */
-
     const {
         renderer,
         scene,
         camera
     } = mindarThree;
 
-
-    /*
-     * TARGET
-     */
-
     const anchor =
         mindarThree.addAnchor(0);
-
-
-    /*
-     * RECTÁNGULO DE PRUEBA
-     *
-     * Si aparece sobre la fotografía,
-     * sabemos que el tracking funciona.
-     */
 
     const geometry =
         new THREE.PlaneGeometry(
@@ -543,10 +494,6 @@
     );
 
 
-    /*
-     * TARGET ENCONTRADO
-     */
-
     anchor.onTargetFound = () => {
 
         console.log(
@@ -569,10 +516,6 @@
     };
 
 
-    /*
-     * TARGET PERDIDO
-     */
-
     anchor.onTargetLost = () => {
 
         console.log(
@@ -582,44 +525,16 @@
     };
 
 
-    /*
-     * INICIAR AR
-     */
 
     async function startAR() {
 
         try {
 
-            console.log(
-                "GRTEC: iniciando MindAR..."
-            );
-
-
-            /*
-             * Iniciar cámara
-             */
-
             await mindarThree.start();
 
 
-            console.log(
-                "GRTEC: MindAR iniciado"
-            );
-
-
-            /*
-             * OBTENER EL VIDEO REAL
-             * QUE ESTÁ USANDO MINDAR
-             */
-
             const stream =
                 mindarThree.video.srcObject;
-
-
-            /*
-             * Conectarlo a nuestro
-             * elemento <video>
-             */
 
             videoElement.srcObject =
                 stream;
@@ -633,18 +548,11 @@
             );
 
 
-            /*
-             * Ocultar loading
-             */
 
             loading.classList.add(
                 "hidden"
             );
 
-
-            /*
-             * Render loop
-             */
 
             renderer.setAnimationLoop(
                 () => {
@@ -679,11 +587,6 @@
 
     }
 
-
-    /*
-     * BOTÓN CERRAR
-     */
-
     closeButton.addEventListener(
         "click",
         () => {
@@ -697,11 +600,6 @@
 
         }
     );
-
-
-    /*
-     * START
-     */
 
     startAR();
 
