@@ -1,111 +1,144 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>GRTEC WebAR</title>
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
-    <title>GRTEC WebAR Test</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      font-family: Arial, sans-serif;
+    }
 
-    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    #status {
+      position: fixed;
+      z-index: 9999;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 48px);
+      max-width: 420px;
+      box-sizing: border-box;
+      padding: 13px 18px;
+      border-radius: 28px;
+      background: rgba(0,0,0,.78);
+      color: #fff;
+      text-align: center;
+      font-size: 16px;
+      line-height: 1.25;
+    }
 
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    #downloadBox {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 50%;
+      bottom: 34px;
+      transform: translateX(-50%);
+      width: calc(100% - 48px);
+      max-width: 420px;
+      text-align: center;
+    }
 
-    <style>
-        html,
-        body {
-            margin: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
+    #downloadBtn {
+      display: inline-block;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 17px 22px;
+      border-radius: 16px;
+      border: 0;
+      background: #fff;
+      color: #111;
+      font-size: 18px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 8px 28px rgba(0,0,0,.35);
+    }
 
-        #status {
-            position: fixed;
-            z-index: 9999;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+    #downloadBtn:active {
+      transform: scale(.98);
+    }
 
-            background: rgba(0,0,0,.8);
-            color: white;
-
-            padding: 12px 20px;
-
-            border-radius: 30px;
-
-            font-family: Arial, sans-serif;
-
-            text-align: center;
-        }
-    </style>
+    #hint {
+      margin-top: 9px;
+      color: #fff;
+      font-size: 12px;
+      text-shadow: 0 1px 3px #000;
+    }
+  </style>
 </head>
 
 <body>
+  <div id="status">📷 Iniciando cámara...</div>
 
-<div id="status">
-    Iniciando cámara...
-</div>
+  <div id="downloadBox">
+    <a id="downloadBtn" href="./assets/fotografia.jpg" download="GRTEC-fotografia.jpg">
+      ⬇️ Descargar fotografía
+    </a>
+    <div id="hint">La fotografía fue reconocida por GRTEC</div>
+  </div>
 
-<a-scene
-    mindar-image="imageTargetSrc: ./assets/fotografia.mind;"
+  <a-scene
+    mindar-image="imageTargetSrc: ./assets/fotografia.mind; uiLoading: no; uiScanning: yes; uiError: yes"
     color-space="sRGB"
     renderer="colorManagement: true"
     vr-mode-ui="enabled: false"
-    device-orientation-permission-ui="enabled: false"
->
+    device-orientation-permission-ui="enabled: false">
 
     <a-camera
-        position="0 0 0"
-        look-controls="enabled: false">
+      position="0 0 0"
+      look-controls="enabled: false">
     </a-camera>
 
     <a-entity
-        id="target"
-        mindar-image-target="targetIndex: 0"
-    >
-
-        <a-plane
-            color="#00ff00"
-            opacity="0.5"
-            position="0 0 0"
-            width="1"
-            height="0.6"
-        >
-        </a-plane>
-
+      id="target"
+      mindar-image-target="targetIndex: 0">
     </a-entity>
+  </a-scene>
 
-</a-scene>
+  <script>
+    const target = document.querySelector("#target");
+    const status = document.querySelector("#status");
+    const downloadBox = document.querySelector("#downloadBox");
+    const downloadBtn = document.querySelector("#downloadBtn");
 
-<script>
+    target.addEventListener("targetFound", () => {
+      console.log("GRTEC TARGET FOUND");
 
-const target = document.querySelector("#target");
+      status.innerHTML = "🎯 ¡Fotografía reconocida!";
+      downloadBox.style.display = "block";
 
-const status = document.querySelector("#status");
+      // Try to start the download automatically.
+      // Mobile browsers may block automatic downloads triggered by
+      // camera events, so the visible button remains as the reliable fallback.
+      setTimeout(() => {
+        try {
+          downloadBtn.click();
+        } catch (e) {
+          console.log("Descarga automática bloqueada; usa el botón.");
+        }
+      }, 250);
+    });
 
-target.addEventListener("targetFound", () => {
+    target.addEventListener("targetLost", () => {
+      console.log("GRTEC TARGET LOST");
 
-    console.log("TARGET FOUND");
+      status.innerHTML = "📷 Apunta la cámara a la fotografía";
+      downloadBox.style.display = "none";
+    });
 
-    status.innerText =
-        "🎯 ¡FOTOGRAFÍA RECONOCIDA!";
-
-});
-
-target.addEventListener("targetLost", () => {
-
-    console.log("TARGET LOST");
-
-    status.innerText =
-        "Apunta la cámara a la fotografía";
-
-});
-
-</script>
-
+    document.querySelector("a-scene").addEventListener("loaded", () => {
+      status.innerHTML = "📷 Apunta la cámara a la fotografía";
+    });
+  </script>
 </body>
 </html>
